@@ -1,5 +1,7 @@
 import numpy as np
 import csv
+import matplotlib.pyplot as plt
+from PIL import Image
 
 
 def initialize_parameters(layer_dims):
@@ -17,7 +19,7 @@ def initialize_parameters(layer_dims):
         parameters['W' + str(l)] = np.random.randn(layer_dims[l],
                                                    layer_dims[
                                                        l - 1]) * 0.01 * np.sqrt(
-            2 / layers_dims[l - 1])
+            2 / layer_dims[l - 1])
         parameters['b' + str(l)] = np.zeros((layer_dims[l], 1))
     return parameters
 
@@ -274,8 +276,8 @@ def update_parameters(parameters, grads, learning_rate):
     return parameters
 
 
-def L_layer_network(X, Y, layers_dims, learning_rate=0.0075,
-                    num_iterations=3000,
+def L_layer_network(X, Y, layers_dims, learning_rate=0.,
+                    num_iterations=0.,
                     print_cost=False,
                     lambd=0):
     """
@@ -300,7 +302,7 @@ def L_layer_network(X, Y, layers_dims, learning_rate=0.0075,
                                          lambd)
         parameters = update_parameters(parameters, grads, learning_rate)
         if print_cost and i % 100 == 0:
-            print("Cost after iteration %i: %f" % (i, cost))
+            print("Cost after iteration %i:" % i, cost)
         if print_cost and i % 100 == 0:
             costs.append(cost)
     # plot the cost
@@ -333,3 +335,35 @@ def predict(X, Y, parameters):
     print("Accuracy: " + str(np.sum((p == Y) / m)))
     return p
 
+
+img = Image.open('person (1).jpg')
+size = (100, 100)
+img = img.resize(size)
+array = np.array(img, dtype='uint8').reshape((1, 100*100*3)).T
+data=np.array(array)
+label=[1]
+
+for i in range(2, 101):
+    img = Image.open('person (%i).jpg' %i)
+    size = (100, 100)
+    img = img.resize(size)
+    array = np.array(img, dtype='uint8')
+    array=array.reshape((1, 100*100*3)).T/255
+    data=np.concatenate((data, array), axis=1)
+    label.append(1)
+for i in range(1, 101):
+    img = Image.open('nonperson (%i).jpg' %i)
+    size = (100, 100)
+    img = img.resize(size)
+    array = np.array(img, dtype='uint8')
+    array=array.reshape((1, 100*100*3)).T/255
+    data=np.concatenate((data, array), axis=1)
+    label.append(0)
+label=np.array(label).reshape((1, 200))
+print(data.shape)
+print(label.shape)
+layers_dims = [100*100*3, 6, 4, 1]
+parameters = L_layer_network(data, label, layers_dims,
+                           num_iterations=10000, learning_rate=0.01,
+                           print_cost=True, lambd=0)
+predict_train = predict(data, label, parameters)
