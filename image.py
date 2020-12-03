@@ -1,8 +1,9 @@
 import cv2
 import numpy as np
 def determinant(namelist, height, width, j, n):
-    # функция выводит геометрическую длину(Len) изменения(на пиксель),
-    # и координаты центра изменения(x,y) между двумя изображениями(под номерами j, n) в списке(namelist)
+    ''' функция выводит геометрическую длину изменения(на пиксель),
+    и координаты центра изменения между двумя изображениями(под номерами j, n) в списке(namelist).
+    height и width разрешение изображений в списке'''
     Len = 0
     y = 0
     x = 0
@@ -20,6 +21,6 @@ def determinant(namelist, height, width, j, n):
     Len = Len/(height*width)
     return [Len, x, y]
 def rgb(namephoto, namelist, i):
-    # функция записывает на i место в список(namelist) изображение в попиксельном виде [r,g,b]
+    ''' функция записывает на i место в список(namelist) изображение(namephoto) в попиксельном виде значений [r,g,b]'''
     img = cv2.imread(namephoto)
     namelist.insert(i, np.asarray(img))
