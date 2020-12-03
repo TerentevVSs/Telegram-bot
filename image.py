@@ -9,7 +9,8 @@ def determinant(namelist, height, width, j, n):
     x = 0
     for i in range(height):
         for k in range(width):
-            #rj, gj, bj - значения пикселя с координатами i,k изображения под номером j
+            '''rj, gj, bj - значения пикселя с координатами i,k изображения под номером j
+            delta - длина изменения (i,k) пикселя'''
             rj, gj, bj = namelist[j][i][k]
             rn, gn, bn = namelist[n][i][k]
             delta = ((rj - rn) ** 2 + (gj - gn) ** 2 + (bj - bn) ** 2) ** 0.5
