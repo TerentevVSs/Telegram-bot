@@ -32,9 +32,9 @@ while (cap.isOpened()):
             Delta = image.delta(couple)
             x.append(count)
             y.append(Delta)
-        elif count==1:
+        elif count == 1:
             height, width = frame.shape[:2]
-            couple[1] = image.rgb(frame, height, width)
+            couple[0] = image.rgb(frame, height, width)
             x0 = int(width / 2)
             y0 = int(height / 2)
             Delta = image.delta(couple)
