@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 count = 0
 path_of_the_center = []
 couple = [0] * 2
-cap = cv2.VideoCapture('test3.mp4')
+cap = cv2.VideoCapture('test2.mp4')
 
 # Проверяем, открывается ли видео
 if (cap.isOpened() == False):
@@ -59,6 +59,6 @@ while (cap.isOpened()):
 
 # Выход из видео, когда процесс окончен
 cap.release()
-plt.plot(x[1:], y, "bo")
+plt.plot(x[26:], y[25:], "bo")
 plt.show()
 cv2.destroyAllWindows()
