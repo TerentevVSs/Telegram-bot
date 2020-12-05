@@ -140,8 +140,9 @@ def compute_cost(predict_value, Y, parameters, lambd):
         cost: значение функции потерь
     """
     m = Y.shape[1]
-    cost = -1 / m * np.sum(Y * np.log(predict_value) +
-                           (1 - Y) * np.log(1 - predict_value))
+    cost = -1 / m * np.sum(Y * np.log(predict_value + 10 ** (-10)) +
+                           (1 - Y) * np.log(
+        1 + 10 ** (-10) - predict_value))
     k = 1 / m * lambd / 2
     L = len(parameters) // 2  # число слоев в сети
     for l in range(1, L):
@@ -157,7 +158,6 @@ def linear_backward(dZ, cache, lambd):
         dZ: производная Z
         cache: значения из прямого распространения
         lambd: параметр для L2 регуляризации
-
     Returns:
         dA_prev: производная функции потерь по Z
         dW: производная функции потерь по W
@@ -240,8 +240,9 @@ def L_layer_network_backward(predict_value, Y, caches, lambd):
     grads = {}
     L = len(caches)  # количество слоев в сети
     Y = Y.reshape(predict_value.shape)
-    dpredict_value = - (np.divide(Y, predict_value) -
-                        np.divide(1 - Y, 1 - predict_value))
+    dpredict_value = - (np.divide(Y, predict_value + 10 ** (-10)) -
+                        np.divide(1 - Y,
+                                  1 + 10 ** (-10) - predict_value))
     current_cache = caches[L - 1]
     grads["dA" + str(L - 1)], grads["dW" + str(L)], grads[
         "db" + str(L)] = linear_activation_backward(dpredict_value,
@@ -337,33 +338,34 @@ def predict(X, Y, parameters):
 
 
 img = Image.open('person (1).jpg')
-size = (100, 100)
+number = 200
+size_x = 200
+size_y = 200
+size = (size_x, size_y)
 img = img.resize(size)
-array = np.array(img, dtype='uint8').reshape((1, 100*100*3)).T
-data=np.array(array)
-label=[1]
+array = np.array(img, dtype='uint8').reshape((1, size_x * size_y * 3)).T
+data = np.array(array)
+label = [1]
 
 for i in range(2, 101):
-    img = Image.open('person (%i).jpg' %i)
-    size = (100, 100)
+    img = Image.open('person (%i).jpg' % i)
     img = img.resize(size)
     array = np.array(img, dtype='uint8')
-    array=array.reshape((1, 100*100*3)).T/255
-    data=np.concatenate((data, array), axis=1)
+    array = array.reshape((1, size_x * size_y * 3)).T / 255
+    data = np.concatenate((data, array), axis=1)
     label.append(1)
 for i in range(1, 101):
-    img = Image.open('nonperson (%i).jpg' %i)
-    size = (100, 100)
+    img = Image.open('nonperson (%i).jpg' % i)
     img = img.resize(size)
     array = np.array(img, dtype='uint8')
-    array=array.reshape((1, 100*100*3)).T/255
-    data=np.concatenate((data, array), axis=1)
+    array = array.reshape((1, size_x * size_y * 3)).T / 255
+    data = np.concatenate((data, array), axis=1)
     label.append(0)
-label=np.array(label).reshape((1, 200))
+label = np.array(label).reshape((1, number))
 print(data.shape)
 print(label.shape)
-layers_dims = [100*100*3, 6, 4, 1]
+layers_dims = [size_x * size_y * 3, 6, 4, 1]
 parameters = L_layer_network(data, label, layers_dims,
-                           num_iterations=10000, learning_rate=0.01,
-                           print_cost=True, lambd=0)
+                             num_iterations=5000, learning_rate=0.01,
+                             print_cost=True, lambd=0)
 predict_train = predict(data, label, parameters)
