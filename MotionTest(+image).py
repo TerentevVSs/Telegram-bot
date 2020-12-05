@@ -41,10 +41,7 @@ while (cap.isOpened()):
             x.append(count)
             sum += couple[1]
         else:
-            height, width = frame.shape[:2]
             couple[1] = image.rgb(frame, height, width)
-            x0 = int(width / 2)
-            y0 = int(height / 2)
             Delta = image.delta(couple)
             x.append(count)
             y.append(Delta)
