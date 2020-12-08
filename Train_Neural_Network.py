@@ -427,7 +427,7 @@ if __name__ == "__main__":
             label_train.append(1)
 
         img = Image.open('a (1).jpg')
-        img = img1.resize(size)
+        img = img.resize(size)
         array = np.array(img, dtype='uint8')
         array = array.reshape((1, size_x * size_y * 3)).T / 255
         data_test = array
