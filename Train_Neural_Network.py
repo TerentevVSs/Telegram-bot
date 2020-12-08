@@ -437,35 +437,35 @@ if __name__ == "__main__":
         img = img.resize(size)
         array = np.array(img, dtype='uint8')
         array = array.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = np.concatenate((data_test, array2), axis=1)
+        data_test = np.concatenate((data_test, array), axis=1)
         label_test.append(1)
 
         img = Image.open('b (1).jpg')
         img = img.resize(size)
         array = np.array(img, dtype='uint8')
         array = array.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = np.concatenate((data_test, array2), axis=1)
+        data_test = np.concatenate((data_test, array), axis=1)
         label_test.append(1)
 
         img = Image.open('b (2).jpg')
         img = img.resize(size)
         array = np.array(img, dtype='uint8')
         array = array.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = np.concatenate((data_test, array2), axis=1)
+        data_test = np.concatenate((data_test, array), axis=1)
         label_test.append(1)
 
         img = Image.open('c (1).jpg')
         img = img.resize(size)
         array = np.array(img, dtype='uint8')
         array = array.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = np.concatenate((data_test, array2), axis=1)
+        data_test = np.concatenate((data_test, array), axis=1)
         label_test.append(1)
 
         img = Image.open('c (2).jpg')
         img = img.resize(size)
         array = np.array(img, dtype='uint8')
         array = array.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = np.concatenate((data_test, array2), axis=1)
+        data_test = np.concatenate((data_test, array), axis=1)
         label_test.append(1)
 
         label_train = np.array(label_train).reshape((1, 302))
