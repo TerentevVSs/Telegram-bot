@@ -410,54 +410,70 @@ if __name__ == "__main__":
             data_train = np.concatenate((data_train, array), axis=1)
             label_train.append(1)
 
-        img1 = Image.open('a (1).jpg')
-        img1 = img1.resize(size)
-        array1 = np.array(img1, dtype='uint8')
-        array1 = array1.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = array1
+        for i in range(1, 101):
+            img = Image.open('nonperson (%i).jpg' % i)
+            img = img.resize(size)
+            array = np.array(img, dtype='uint8')
+            array = array.reshape((1, size_x * size_y * 3)).T / 255
+            data_train = np.concatenate((data_train, array), axis=1)
+            label_train.append(0)
+
+        for i in range(1, 101):
+            img = Image.open('person (%i).jpg' % i)
+            img = img.resize(size)
+            array = np.array(img, dtype='uint8')
+            array = array.reshape((1, size_x * size_y * 3)).T / 255
+            data_train = np.concatenate((data_train, array), axis=1)
+            label_train.append(1)
+
+        img = Image.open('a (1).jpg')
+        img = img1.resize(size)
+        array = np.array(img, dtype='uint8')
+        array = array.reshape((1, size_x * size_y * 3)).T / 255
+        data_test = array
         label_test = [1]
 
-        img2 = Image.open('a (2).jpg')
-        img2 = img2.resize(size)
-        array2 = np.array(img2, dtype='uint8')
-        array2 = array2.reshape((1, size_x * size_y * 3)).T / 255
+        img = Image.open('a (2).jpg')
+        img = img.resize(size)
+        array = np.array(img, dtype='uint8')
+        array = array.reshape((1, size_x * size_y * 3)).T / 255
         data_test = np.concatenate((data_test, array2), axis=1)
         label_test.append(1)
 
-        img3 = Image.open('b (1).jpg')
-        img3 = img3.resize(size)
-        array3 = np.array(img1, dtype='uint8')
-        array3 = array3.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = np.concatenate((data_test, array3), axis=1)
-        label_test.append(1)
-
-        img4 = Image.open('b (2).jpg')
-        img4 = img4.resize(size)
-        array2 = np.array(img2, dtype='uint8')
-        array2 = array2.reshape((1, size_x * size_y * 3)).T / 255
+        img = Image.open('b (1).jpg')
+        img = img.resize(size)
+        array = np.array(img, dtype='uint8')
+        array = array.reshape((1, size_x * size_y * 3)).T / 255
         data_test = np.concatenate((data_test, array2), axis=1)
         label_test.append(1)
 
-        img3 = Image.open('c (1).jpg')
-        img3 = img3.resize(size)
-        array3 = np.array(img1, dtype='uint8')
-        array3 = array3.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = np.concatenate((data_test, array3), axis=1)
+        img = Image.open('b (2).jpg')
+        img = img.resize(size)
+        array = np.array(img, dtype='uint8')
+        array = array.reshape((1, size_x * size_y * 3)).T / 255
+        data_test = np.concatenate((data_test, array2), axis=1)
         label_test.append(1)
 
-        img4 = Image.open('c (2).jpg')
-        img4 = img4.resize(size)
-        array4 = np.array(img4, dtype='uint8')
-        array4 = array4.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = np.concatenate((data_test, array4), axis=1)
+        img = Image.open('c (1).jpg')
+        img = img.resize(size)
+        array = np.array(img, dtype='uint8')
+        array = array.reshape((1, size_x * size_y * 3)).T / 255
+        data_test = np.concatenate((data_test, array2), axis=1)
         label_test.append(1)
 
-        label_train = np.array(label_train).reshape((1, 102))
+        img = Image.open('c (2).jpg')
+        img = img.resize(size)
+        array = np.array(img, dtype='uint8')
+        array = array.reshape((1, size_x * size_y * 3)).T / 255
+        data_test = np.concatenate((data_test, array2), axis=1)
+        label_test.append(1)
+
+        label_train = np.array(label_train).reshape((1, 302))
         label_test = np.array(label_test).reshape((1, 6))
         layers_dims = [size_x * size_y * 3, 6, 4, 1]
         parameters = L_layer_network(data_train, label_train,
                                      layers_dims,
-                                     num_iterations=2000,
+                                     num_iterations=5000,
                                      learning_rate=0.01,
                                      print_cost=True, lambd=0)
         predict_train = predict_training(data_train, label_train,
