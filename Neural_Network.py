@@ -1,10 +1,10 @@
 import numpy as np
 from PIL import Image
-import Work_With_Parameters as WWP
-import Train_Neural_Network as TNW
+from Work_With_Parameters import get_parameters
+from Train_Neural_Network import predict
 
 
-parameters = WWP.get_parameters()
+parameters = get_parameters()
 
 
 def check_image(image, parameters=parameters):
@@ -24,5 +24,5 @@ def check_image(image, parameters=parameters):
     array = np.array(image, dtype='uint8')
     array = array.reshape((1, size_x * size_y * 3)).T / 255
     data_test = array
-    prediction = TNW.predict(data_test, parameters)
+    prediction = predict(data_test, parameters)
     return prediction
