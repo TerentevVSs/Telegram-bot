@@ -10,9 +10,9 @@ cap = cv2.VideoCapture('newtest2.mp4')
 # Параметры сглаживания m,n
 m = 20
 n = 20
-#параметр усреднения z, и массив среднего
+# параметр усреднения z, и массив среднего
 z = 20
-staticset = [0]*(z+1)
+staticset = [0] * (z + 1)
 # Проверяем, открывается ли видео
 if (cap.isOpened() == False):
     print("Error opening video stream or file")
@@ -24,7 +24,7 @@ neuralnetworkset = []
 # Открываем видео для чтения до окончания процесса
 while (cap.isOpened()):
     ret, frame = cap.read()
-    #globals(framemax,frame1)
+    # globals(framemax,frame1)
     if ret == True:
         count += 1
         if count > z + 1:
@@ -35,21 +35,21 @@ while (cap.isOpened()):
             print(Delta)
             x.append(count)
             y.append(Delta)
-            if Delta > 100*mediumdelta:
+            if Delta > 100 * mediumdelta:
                 moveset.append([frame, Delta])
                 lenneurset += 1
                 movstart = count
             else:
                 if lenneurset != 0:
                     if relaxtime < 10:
-                        relaxtime +=1
+                        relaxtime += 1
                     else:
                         indxleft = 0
                         indxright = lenneurset
                         maxdeltaleft = 0
                         maxdeltaright = 0
                         for k in range(lenneurset):
-                            if k < int(lenneurset/2):
+                            if k < int(lenneurset / 2):
                                 if moveset[k][1] > maxdeltaleft:
                                     maxdeltaleft = moveset[k][1]
                                     indxleft = k
@@ -60,16 +60,21 @@ while (cap.isOpened()):
                         frameleftmax = moveset[indxleft][0]
                         framemedium = moveset[int(lenneurset / 2)][0]
                         framerightmax = moveset[indxright][0]
-                        neuralnetworkset.append([frameleftmax, framemedium, framerightmax, movstart])
+                        neuralnetworkset.append(
+                            [frameleftmax, framemedium, framerightmax,
+                             movstart])
                         print('Тут должен быть мем')
                         lenneurset = 0
                         relaxtime = 0
                 else:
-                    if Delta < mediumdelta*40 and deltaduo < 1.5*mediumduo:
-                        staticset[z] = staticset[z] * z - staticset[i][0]
+                    if Delta < mediumdelta * 40 and \
+                            deltaduo < 1.5 * mediumduo:
+                        staticset[z] = staticset[z] * z \
+                                       - staticset[i][0]
                         staticset[i] = [couple[1], Delta]
                         i = (i + 1) % z
-                        staticset[z] = (staticset[z] + staticset[i][0]) / z
+                        staticset[z] = (staticset[z] +
+                                        staticset[i][0]) / z
                         couple[0] = staticset[z]
         elif count == z + 1:
             staticset[count - 2] = [couple[1], Delta]
@@ -82,7 +87,7 @@ while (cap.isOpened()):
             couple[1] = image.rgb(frame, m, n)
             Delta = image.delta(couple)
             old_delta = Delta
-            mediumduo = mediumduo/z
+            mediumduo = mediumduo / z
             x.append(count)
             y.append(Delta)
         elif count == 1:
@@ -109,11 +114,11 @@ while (cap.isOpened()):
             print(Delta)
             x.append(count)
             y.append(Delta)
-            staticset[count-2] = [couple[1], Delta]
+            staticset[count - 2] = [couple[1], Delta]
             sumdelta = sumdelta + Delta
-            staticset[z] = staticset[z]*(count-2)
-            staticset[z] += staticset[count-2][0]
-            staticset[z] = staticset[z]/(count-1)
+            staticset[z] = staticset[z] * (count - 2)
+            staticset[z] += staticset[count - 2][0]
+            staticset[z] = staticset[z] / (count - 1)
             couple[0] = staticset[z]
         frame_to_show = cv2.circle(frame, (x0, y0), 1, 255, 1)
         cv2.imshow('Frame', frame_to_show)
