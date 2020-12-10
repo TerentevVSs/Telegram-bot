@@ -1,93 +1,118 @@
 import cv2
-import numpy as np
-import module_image_2 as image
+import module_image as image
 import matplotlib.pyplot as plt
 
 count = 0
 path_of_the_center = []
 couple = [0] * 2
 cap = cv2.VideoCapture('newtest2.mp4')
-# Параметры сглаживания m,n
+# Параметры сжатия m,n
 m = 20
 n = 20
-# параметр усреднения z, и массив среднего
-z = 20
-staticset = [0] * (z + 1)
+# параметр кол-ва кадров в усреднении len_static_set, и массив кадров для усреднения  static_set  + средний кадр
+len_static = 40
+static_set = [0] * (len_static + 1)
+# позиция в static_set на который будет поставлен новый статичный кадр
+position_static_set = 0
 # Проверяем, открывается ли видео
 if (cap.isOpened() == False):
     print("Error opening video stream or file")
 x = []
 y = []
-# Массивы для кадров в движении
-moveset = []
-neuralnetworkset = []
+# move_set хранятся кадры во время движения
+move_set = []
+# длина массива move_set
+len_neur_set = 0
+# номер кадра начала движения
+move_start = 'None'
+# neural_network_set хранятся наборы кадров с номерами начала движения для нейросети
+neural_network_set = []
+# длина списка набор для нейросети
+len_neur_set = 0
+# medium_delta - среднее отклонение в покое
+medium_delta = 0
+# величина для подсчёта medium_delta
+sum_delta = 0
+# среднее отклонение двух последовательных кадров друг от друга
+medium_duo = 0
+# кол-во кадров после конца движения
+relax_time = 0
 # Открываем видео для чтения до окончания процесса
 while (cap.isOpened()):
     ret, frame = cap.read()
-    # globals(framemax,frame1)
     if ret == True:
         count += 1
-        if count > z + 1:
+        if count > len_static + 1:
+            old_frame = couple[1]
             couple[1] = image.rgb(frame, m, n)
             Delta = image.delta(couple)
-            deltaduo = abs(Delta - old_delta)
-            old_delta = Delta
+            delta_duo = image.delta([couple[1], old_frame])
             print(Delta)
             x.append(count)
             y.append(Delta)
-            if Delta > 100 * mediumdelta:
-                moveset.append([frame, Delta])
-                lenneurset += 1
-                movstart = count
+            if Delta > 100 * medium_delta:
+                move_set.append([frame, Delta])
+                move_start = count
             else:
-                if lenneurset != 0:
-                    if relaxtime < 10:
-                        relaxtime += 1
+                # проверка было ли движение
+                if len(move_set) != 0:
+                    # движение было, проверяет завершённость
+                    if relax_time < 10:
+                        relax_time += 1
                     else:
-                        indxleft = 0
-                        indxright = lenneurset
-                        maxdeltaleft = 0
-                        maxdeltaright = 0
-                        for k in range(lenneurset):
-                            if k < int(lenneurset / 2):
-                                if moveset[k][1] > maxdeltaleft:
-                                    maxdeltaleft = moveset[k][1]
-                                    indxleft = k
+                        # движение завершено, выбирает кадры для нейросети
+                        len_neur_set = len(move_set)
+                        index_left = 0
+                        index_right = len_neur_set
+                        max_delta_left = 0
+                        max_delta_right = 0
+                        for k in range(len_neur_set):
+                            if k < int(len_neur_set / 2):
+                                if move_set[k][1] > max_delta_left:
+                                    max_delta_left = move_set[k][1]
+                                    index_left = k
                             else:
-                                if moveset[k][1] > maxdeltaright:
-                                    maxdeltaright = moveset[k][1]
-                                    indxright = k
-                        frameleftmax = moveset[indxleft][0]
-                        framemedium = moveset[int(lenneurset / 2)][0]
-                        framerightmax = moveset[indxright][0]
-                        neuralnetworkset.append(
-                            [frameleftmax, framemedium, framerightmax,
-                             movstart])
+                                if move_set[k][1] > max_delta_right:
+                                    max_delta_right = move_set[k][1]
+                                    index_right = k
+                        frame_left_max = move_set[index_left][0]
+                        frame_medium = move_set[int(len_neur_set / 2)][0]
+                        frame_right_max = move_set[index_right][0]
+                        # кадр с левым максимумом делта, средний кадр, правый кадр с максимумом делта
+                        # вместе с номером кадра начала движения, добавляюся в массив для нейросети
+                        neural_network_set.append(
+                            [frame_left_max, frame_medium, frame_right_max,
+                             move_start])
                         print('Тут должен быть мем')
-                        lenneurset = 0
-                        relaxtime = 0
+                        relax_time = 0
+                        move_set = []
                 else:
-                    if Delta < mediumdelta * 40 and \
-                            deltaduo < 1.5 * mediumduo:
-                        staticset[z] = staticset[z] * z \
-                                       - staticset[i][0]
-                        staticset[i] = [couple[1], Delta]
-                        i = (i + 1) % z
-                        staticset[z] = (staticset[z] +
-                                        staticset[i][0]) / z
-                        couple[0] = staticset[z]
-        elif count == z + 1:
-            staticset[count - 2] = [couple[1], Delta]
-            sumdelta = sumdelta + Delta
-            mediumdelta = sumdelta / z
-            staticset[z] = staticset[z] * (count - 2)
-            staticset[z] += staticset[count - 2][0]
-            staticset[z] = staticset[z] / (count - 1)
-            couple[0] = staticset[z]
+                    # движение не было
+                    if Delta < medium_delta * 60 and \
+                            delta_duo < 2 * medium_duo:
+                        # кадр подходит для усреднения
+                        static_set[len_static] = static_set[len_static] * len_static \
+                                       - static_set[position_static_set][0]
+                        static_set[position_static_set] = [couple[1], Delta]
+                        position_static_set = (position_static_set + 1) % len_static
+                        static_set[len_static] = (static_set[len_static] +
+                                        static_set[position_static_set][0]) / len_static
+                        couple[0] = static_set[len_static]
+        elif count == len_static + 1:
+            static_set[count - 2] = [couple[1], Delta]
+            # вычислениек medium_delta
+            sum_delta = sum_delta + Delta
+            medium_delta = sum_delta / len_static
+            # обновление среднего кадра
+            static_set[len_static] = static_set[len_static] * (count - 2)
+            static_set[len_static] += static_set[count - 2][0]
+            static_set[len_static] = static_set[len_static] / (count - 1)
+            couple[0] = static_set[len_static]
             couple[1] = image.rgb(frame, m, n)
             Delta = image.delta(couple)
-            old_delta = Delta
-            mediumduo = mediumduo / z
+            # вычисление medium_duo
+            medium_duo += image.delta([static_set[count - 2][0], static_set[count - 3][0]])
+            medium_duo = medium_duo / len_static
             x.append(count)
             y.append(Delta)
         elif count == 1:
@@ -96,30 +121,24 @@ while (cap.isOpened()):
             x0 = int(width / 2)
             y0 = int(height / 2)
             x.append(count)
-            # начальное значение используемых величин
-            old_delta = 0
-            mediumdelta = 0
-            sumdelta = 0
-            mediumduo = 0
-            motion = 0
-            lenneurset = 0
-            relaxtime = 0
-            movstart = 'None'
-            i = 0
+
+
         else:
             couple[1] = image.rgb(frame, m, n)
             Delta = image.delta(couple)
-            mediumduo += abs(Delta - old_delta)
-            old_delta = Delta
             print(Delta)
             x.append(count)
             y.append(Delta)
-            staticset[count - 2] = [couple[1], Delta]
-            sumdelta = sumdelta + Delta
-            staticset[z] = staticset[z] * (count - 2)
-            staticset[z] += staticset[count - 2][0]
-            staticset[z] = staticset[z] / (count - 1)
-            couple[0] = staticset[z]
+            static_set[count - 2] = [couple[1], Delta]
+            # подсчёт
+            if count > 2:
+                medium_duo += image.delta([static_set[count - 2][0], static_set[count-3][0]])
+            sum_delta = sum_delta + Delta
+            # обновление среднего кадра
+            static_set[len_static] = static_set[len_static] * (count - 2)
+            static_set[len_static] += static_set[count - 2][0]
+            static_set[len_static] = static_set[len_static] / (count - 1)
+            couple[0] = static_set[len_static]
         frame_to_show = cv2.circle(frame, (x0, y0), 1, 255, 1)
         cv2.imshow('Frame', frame_to_show)
         # Press Q on keyboard to  exit
