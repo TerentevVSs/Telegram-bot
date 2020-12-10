@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import module_image as image
+import module_image_2 as image
 import matplotlib.pyplot as plt
 
 count = 0
