@@ -64,6 +64,7 @@ while (cap.isOpened()):
                         print('Тут должен быть мем')
                         lenneurset = 0
                         relaxtime = 0
+                        moveset = []
                 else:
                     if Delta < mediumdelta*40 and deltaduo < 1.5*mediumduo:
                         staticset[z] = staticset[z] * z - staticset[i][0]
