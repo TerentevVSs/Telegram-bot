@@ -1,53 +1,115 @@
 import cv2
 import numpy as np
-import module_image_2 as image
+import module_image as image
 import matplotlib.pyplot as plt
 
 count = 0
 path_of_the_center = []
 couple = [0] * 2
 cap = cv2.VideoCapture('newtest2.mp4')
-m = 50
-n = 50
-
+# Параметры сглаживания m,n
+m = 20
+n = 20
+#параметр усреднения z, и массив среднего
+z = 80
+staticset = [0]*(z+1)
 # Проверяем, открывается ли видео
 if (cap.isOpened() == False):
     print("Error opening video stream or file")
 x = []
 y = []
-sum = 0
+# Массивы для кадров в движении
+moveset = []
+neuralnetworkset = []
 # Открываем видео для чтения до окончания процесса
 while (cap.isOpened()):
     ret, frame = cap.read()
+    #globals(framemax,frame1)
     if ret == True:
         count += 1
-        if count > 21:
+        if count > z + 1:
             couple[1] = image.rgb(frame, m, n)
             Delta = image.delta(couple)
+            deltaduo = abs(Delta - old_delta)
+            old_delta = Delta
             print(Delta)
             x.append(count)
             y.append(Delta)
-        elif count == 21:
-            average = sum / 20
-            couple[0] = average
+            if Delta > 100*mediumdelta:
+                moveset.append([frame, Delta])
+                lenneurset += 1
+                movstart = count
+            else:
+                if lenneurset != 0:
+                    if relaxtime < 10:
+                        relaxtime +=1
+                    else:
+                        indxleft = 0
+                        indxright = lenneurset
+                        maxdeltaleft = 0
+                        maxdeltaright = 0
+                        for k in range(lenneurset):
+                            if k < int(lenneurset/2):
+                                if moveset[k][1] > maxdeltaleft:
+                                    maxdeltaleft = moveset[k][1]
+                                    indxleft = k
+                            else:
+                                if moveset[k][1] > maxdeltaright:
+                                    maxdeltaright = moveset[k][1]
+                                    indxright = k
+                        frameleftmax = moveset[indxleft][0]
+                        framemedium = moveset[int(lenneurset / 2)][0]
+                        framerightmax = moveset[indxright][0]
+                        neuralnetworkset.append([frameleftmax, framemedium, framerightmax, movstart])
+                        print('Тут должен быть мем')
+                        lenneurset = 0
+                        relaxtime = 0
+                else:
+                    if Delta < mediumdelta*40 and deltaduo < 1.5*mediumduo:
+                        staticset[z] = staticset[z] * z - staticset[i][0]
+                        staticset[i] = [couple[1], Delta]
+                        i = (i + 1) % z
+                        staticset[z] = (staticset[z] + staticset[i][0]) / z
+                        couple[0] = staticset[z]
+        elif count == z + 1:
+            staticset[count - 2] = [couple[1], Delta]
+            sumdelta = sumdelta + Delta
+            mediumdelta = sumdelta / z
+            staticset[z] = staticset[z] / z
+            couple[0] = staticset[z]
             couple[1] = image.rgb(frame, m, n)
             Delta = image.delta(couple)
+            old_delta = Delta
+            mediumduo = mediumduo/z
             x.append(count)
             y.append(Delta)
         elif count == 1:
             height, width = frame.shape[:2]
-            couple[0] =  image.rgb(frame, m, n)
+            couple[0] = image.rgb(frame, m, n)
             x0 = int(width / 2)
             y0 = int(height / 2)
-            Delta = image.delta(couple)
             x.append(count)
-            sum += couple[1]
+            # начальное значение используемых величин
+            old_delta = 0
+            mediumdelta = 0
+            sumdelta = 0
+            mediumduo = 0
+            motion = 0
+            lenneurset = 0
+            relaxtime = 0
+            movstart = 'None'
+            i = 0
         else:
             couple[1] = image.rgb(frame, m, n)
             Delta = image.delta(couple)
+            mediumduo += abs(Delta - old_delta)
+            old_delta = Delta
+            print(Delta)
             x.append(count)
             y.append(Delta)
-            sum += couple[1]
+            staticset[count-2] = [couple[1], Delta]
+            sumdelta = sumdelta + Delta
+            staticset[z] += staticset[count-2][0]
         frame_to_show = cv2.circle(frame, (x0, y0), 1, 255, 1)
         cv2.imshow('Frame', frame_to_show)
         # Press Q on keyboard to  exit
@@ -61,4 +123,3 @@ cap.release()
 plt.plot(x[26:], y[25:], "bo")
 plt.show()
 cv2.destroyAllWindows()
-
