@@ -11,7 +11,7 @@ cap = cv2.VideoCapture('newtest2.mp4')
 m = 20
 n = 20
 #параметр усреднения z, и массив среднего
-z = 80
+z = 20
 staticset = [0]*(z+1)
 # Проверяем, открывается ли видео
 if (cap.isOpened() == False):
@@ -64,7 +64,6 @@ while (cap.isOpened()):
                         print('Тут должен быть мем')
                         lenneurset = 0
                         relaxtime = 0
-                        moveset = []
                 else:
                     if Delta < mediumdelta*40 and deltaduo < 1.5*mediumduo:
                         staticset[z] = staticset[z] * z - staticset[i][0]
@@ -76,7 +75,9 @@ while (cap.isOpened()):
             staticset[count - 2] = [couple[1], Delta]
             sumdelta = sumdelta + Delta
             mediumdelta = sumdelta / z
-            staticset[z] = staticset[z] / z
+            staticset[z] = staticset[z] * (count - 2)
+            staticset[z] += staticset[count - 2][0]
+            staticset[z] = staticset[z] / (count - 1)
             couple[0] = staticset[z]
             couple[1] = image.rgb(frame, m, n)
             Delta = image.delta(couple)
@@ -110,7 +111,10 @@ while (cap.isOpened()):
             y.append(Delta)
             staticset[count-2] = [couple[1], Delta]
             sumdelta = sumdelta + Delta
+            staticset[z] = staticset[z]*(count-2)
             staticset[z] += staticset[count-2][0]
+            staticset[z] = staticset[z]/(count-1)
+            couple[0] = staticset[z]
         frame_to_show = cv2.circle(frame, (x0, y0), 1, 255, 1)
         cv2.imshow('Frame', frame_to_show)
         # Press Q on keyboard to  exit
