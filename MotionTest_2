@@ -15,13 +15,7 @@ static_set = [0] * (len_static + 1)
 position_static_set = 0
 # Списки с номерами кадров и значением функции delta для графиков
 x, y = [], []
-# move_set хранятся кадры во время движения
-move_set = []
-# длина массива move_set
-len_neural_set = 0
-# номер кадра начала движения
-move_start = 'None'
-# neural_network_set хранятся наборы кадров с номерами начала движения для нейросети
+# neural_network_set хранятся кадры для проверки
 neural_network_set = []
 # длина списка набор для нейросети
 len_neural_set = 0
@@ -50,43 +44,19 @@ while cap.isOpened():
             x.append(count)
             y.append(Delta)
             if Delta > 100 * medium_delta:
-                move_set.append([frame, Delta])
-                move_start = count
+                status = "move"
+                print("Убивают, КАРАУЛ")
+                if count%3 == 0:
+                    neural_network_set.append(frame)
             else:
                 # проверка было ли движение
-                if len(move_set) != 0:
+                if status == "move":
                     # движение было, проверяет завершённость
-                    if relax_time < 10:
-                        relax_time += 1
-                    else:
-                        # движение завершено, выбирает кадры для нейросети
-                        len_neural_set = len(move_set)
-                        index_left = 0
-                        index_right = len_neural_set
-                        max_delta_left = 0
-                        max_delta_right = 0
-                        for k in range(len_neural_set):
-                            if k < int(len_neural_set / 2):
-                                if move_set[k][1] > max_delta_left:
-                                    max_delta_left = move_set[k][1]
-                                    index_left = k
-                            else:
-                                if move_set[k][1] > max_delta_right:
-                                    max_delta_right = move_set[k][1]
-                                    index_right = k
-                        frame_left_max = move_set[index_left][0]
-                        frame_medium = move_set[int(len_neural_set / 2)][0]
-                        frame_right_max = move_set[index_right][0]
-                        # кадр с левым максимумом делта, средний кадр, правый кадр с максимумом делта
-                        # вместе с номером кадра начала движения, добавляюся в массив для нейросети
-                        neural_network_set.append(
-                            [frame_left_max, frame_medium, frame_right_max,
-                             move_start])
-                        print('Тут должен быть мем')
-                        relax_time = 0
-                        move_set = []
+                    relax_time += 1
+                    if relax_time == 10:
+                        status = "static"
                 else:
-                    # движение не было
+                    # движение не было или прошло, проверка для добавление кадр в усреднение
                     if Delta < medium_delta * 60 and \
                             delta_duo < 2 * medium_duo:
                         # кадр подходит для усреднения
@@ -95,8 +65,8 @@ while cap.isOpened():
                         static_set[position_static_set] = [couple[1], Delta]
                         position_static_set = (position_static_set + 1) % len_static
                         static_set[len_static] = (static_set[len_static] +
-                                                  static_set[position_static_set][0]) / len_static
-                        couple[0] = static_set[len_static]
+                                        static_set[position_static_set][0]) / len_static
+                        couple[0] = static_set[len_static]            
         elif count == len_static + 1:
             static_set[count - 2] = [couple[1], Delta]
             # вычислениек medium_delta
