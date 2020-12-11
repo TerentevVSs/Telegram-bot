@@ -15,8 +15,8 @@ static_set = [0] * (len_static + 1)
 position_static_set = 0
 # Списки с номерами кадров и значением функции delta для графиков
 x, y = [], []
-# neural_network_set хранятся кадры для проверки
-neural_network_set = []
+# neural_network_set кадр для проверки
+neural_network_check = "None"
 # длина списка набор для нейросети
 len_neural_set = 0
 # medium_delta - среднее отклонение в покое
@@ -45,9 +45,8 @@ while cap.isOpened():
             y.append(Delta)
             if Delta > 100 * medium_delta:
                 status = "move"
-                print("Убивают, КАРАУЛ")
                 if count%3 == 0:
-                    neural_network_set.append(frame)
+                    neural_network_check = image.rgb(frame, 160, 90)
             else:
                 # проверка было ли движение
                 if status == "move":
