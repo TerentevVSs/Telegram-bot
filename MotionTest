@@ -1,5 +1,5 @@
 import cv2
-import module_image_2 as image
+import module_image as image
 import matplotlib.pyplot as plt
 
 count = 0
