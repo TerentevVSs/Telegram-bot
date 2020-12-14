@@ -1,14 +1,18 @@
 import numpy as np
 import cv2
 def delta(namelist):
-    '''Args: namelist
-    Return: функция считает сумму квадратов разностей r,g,b по пикселям двух изображений'''
-    C = np.add(namelist[0], -namelist[1])
-    C[0][C[0] <= 0.7] = 0
-    C = C.T
-    C = np.dot(C, C.T)
-    C = np.sum(C)
-    return C
+    """
+    Args: 
+        namelist - список кадров
+    Return: 
+        сумму квадратов разностей r,g,b по пикселям двух изображений
+    """
+    S = np.add(namelist[0], -namelist[1])
+    S[0][S[0] <= 0.7] = 0
+    S = S.T
+    S = np.dot(S, S.T)
+    S = np.sum(S)
+    return S
 
 
 def rgb(name_photo, m, n):
