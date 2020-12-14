@@ -1,5 +1,7 @@
 import numpy as np
 import cv2
+
+
 def delta(namelist):
     """
     Args: 
@@ -15,7 +17,7 @@ def delta(namelist):
     return s
 
 
-def rgb(name_photo, m, n):
+def rgb(name_photo, height, width):
     """
     функция преобразует изображение(img) в вектор
     Args:
@@ -25,7 +27,7 @@ def rgb(name_photo, m, n):
     Returns:
         array: функция преобразует изображение(img) в вектор
     """
-    size = (m, n)
+    size = (height, width)
     name_photo = cv2.resize(name_photo, dsize=size, interpolation=cv2.INTER_CUBIC)
-    array = np.array(name_photo, dtype='uint8').reshape((1, m * n * 3)).T/255
+    array = np.array(name_photo, dtype='uint8').reshape((1, height * width * 3)).T/255
     return array
