@@ -1,10 +1,12 @@
 import cv2
 import module_image as image
 import matplotlib.pyplot as plt
-
+import Neural_Network
+import numpy as np
 count = 0
+path_of_the_center = []
 couple = [0] * 2
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cap = cv2.VideoCapture('newtest2.mp4')
 # Параметры сжатия m,n
 m = 20
 n = 20
@@ -13,12 +15,15 @@ len_static = 40
 static_set = [0] * (len_static + 1)
 # позиция в static_set на который будет поставлен новый статичный кадр
 position_static_set = 0
-# Списки с номерами кадров и значением функции delta для графиков
-x, y = [], []
+# Проверяем, открывается ли видео
+if (cap.isOpened() == False):
+    print("Error opening video stream or file")
+x = []
+y = []
 # neural_network_set кадр для проверки
 neural_network_check = "None"
 # длина списка набор для нейросети
-len_neural_set = 0
+len_neur_set = 0
 # medium_delta - среднее отклонение в покое
 medium_delta = 0
 # величина для подсчёта medium_delta
@@ -27,13 +32,27 @@ sum_delta = 0
 medium_duo = 0
 # кол-во кадров после конца движения
 relax_time = 0
-# Проверяем, открывается ли видео
-if not cap.isOpened():
-    print("Error opening video stream or file")
+# статус движение - покой
+status = "static"
+worry = 0
 # Открываем видео для чтения до окончания процесса
-while cap.isOpened():
+
+while (cap.isOpened()):
     ret, frame = cap.read()
-    if ret:
+    mode = "day"
+    if mode == "day":
+        # параметры для дня
+        param1 = 40
+        param2 = 6
+        param3 = 40
+        param4 = 2
+    else:
+        # параметры ночи
+        param1 = 15
+        param2 = 4
+        param3 = 5
+        param4 = 1.5
+    if ret == True:
         count += 1
         if count > len_static + 1:
             old_frame = couple[1]
@@ -43,10 +62,17 @@ while cap.isOpened():
             print(Delta)
             x.append(count)
             y.append(Delta)
-            if Delta > 100 * medium_delta:
+            if Delta > medium_delta*(param1 + medium_duo/delta_duo) and delta_duo > medium_duo * param2:
                 status = "move"
                 if count%3 == 0:
-                    neural_network_check = image.rgb(frame, 160, 90)
+                    neural_network_check = frame
+                    neural_network_check = np.array(neural_network_check, dtype='uint8')
+                    neural_network_check = cv2.resize(neural_network_check, dsize=(160, 90), interpolation=cv2.INTER_CUBIC)
+                    neural_network_check = neural_network_check.reshape(160*90*3, 1)/255
+                    worry = Neural_Network.check_image(neural_network_check)
+                    if worry == 1:
+                        # Тут вывод в бота
+                        print("Человек", count)
             else:
                 # проверка было ли движение
                 if status == "move":
@@ -55,17 +81,16 @@ while cap.isOpened():
                     if relax_time == 10:
                         status = "static"
                 else:
-                    # движение не было или прошло, проверка для добавление кадр в усреднение
-                    if Delta < medium_delta * 60 and \
-                            delta_duo < 2 * medium_duo:
+                    # движение не было иди прошло, проверка для добавление кадр в усреднение
+                    if Delta < param3 * medium_delta and delta_duo < medium_duo * param4:
                         # кадр подходит для усреднения
                         static_set[len_static] = static_set[len_static] * len_static \
                                        - static_set[position_static_set][0]
                         static_set[position_static_set] = [couple[1], Delta]
-                        position_static_set = (position_static_set + 1) % len_static
                         static_set[len_static] = (static_set[len_static] +
                                         static_set[position_static_set][0]) / len_static
-                        couple[0] = static_set[len_static]            
+                        couple[0] = static_set[len_static]
+                        position_static_set = (position_static_set + 1) % len_static
         elif count == len_static + 1:
             static_set[count - 2] = [couple[1], Delta]
             # вычислениек medium_delta
@@ -89,6 +114,8 @@ while cap.isOpened():
             x0 = int(width / 2)
             y0 = int(height / 2)
             x.append(count)
+
+
         else:
             couple[1] = image.rgb(frame, m, n)
             Delta = image.delta(couple)
@@ -105,9 +132,10 @@ while cap.isOpened():
             static_set[len_static] += static_set[count - 2][0]
             static_set[len_static] = static_set[len_static] / (count - 1)
             couple[0] = static_set[len_static]
-        cv2.imshow('Frame', frame)
-        # Press "space" on keyboard to  exit
-        if cv2.waitKey(32) & 0xFF == ord(' '):
+        frame_to_show = cv2.circle(frame, (x0, y0), 1, 255, 1)
+        cv2.imshow('Frame', frame_to_show)
+        # Press Q on keyboard to  exit
+        if cv2.waitKey(25) & 0xFF == ord('q'):
             break
     else:
         break
