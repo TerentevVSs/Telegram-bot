@@ -7,12 +7,12 @@ def delta(namelist):
     Return: 
         сумму квадратов разностей r,g,b по пикселям двух изображений
     """
-    S = np.add(namelist[0], -namelist[1])
-    S[0][S[0] <= 0.7] = 0
-    S = S.T
-    S = np.dot(S, S.T)
-    S = np.sum(S)
-    return S
+    s = np.add(namelist[0], -namelist[1])
+    s[0][s[0] <= 0.7] = 0
+    s = s.T
+    s = np.dot(s, s.T)
+    s = np.sum(s)
+    return s
 
 
 def rgb(name_photo, m, n):
