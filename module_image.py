@@ -4,6 +4,7 @@ import cv2
 
 def delta(namelist):
     """
+    Функция считает s
     Args: 
         namelist - список кадров
     Return: 
