@@ -349,7 +349,7 @@ def predict(X, parameters):
         Возвращает предсказанное значение
     """
     probabilities, caches = L_layer_network_forward(X, parameters)
-    if probabilities[0][0] > 0.5:
+    if probabilities[0][0] > 0.95:
         return 1
     else:
         return 0
@@ -362,12 +362,12 @@ if __name__ == "__main__":
 отменить запуск программы нажав "N", иначе параметры нейросети
 обнулятся, что приведет к потере работоспособности. Если 
 хотите продолжить нажмите "Y", если нет нажмите "N".""")
-    check = input("Y/N?:")
+    check = "Y"  # input("Y/N?:")
     """
     Данный код предназначен для быстрой настройки сети и будет удален 
     позднее.
     """
-    if check == "Y" or check == "y":
+    if check == "Y" or check == "y" or True:
         size_x = 160
         size_y = 90
         img = Image.open('test (1).jpg')
@@ -418,6 +418,21 @@ if __name__ == "__main__":
             data_train = np.concatenate((data_train, array), axis=1)
             label_train.append(0)
 
+        for i in range(1, 41):
+            img = Image.open('np (%i).jpg' % i)
+            img = img.resize(size)
+            array = np.array(img, dtype='uint8')
+            array = array.reshape((1, size_x * size_y * 3)).T / 255
+            data_train = np.concatenate((data_train, array), axis=1)
+            label_train.append(0)
+        for i in range(1, 7):
+            img = Image.open('p (%i).jpg' % i)
+            img = img.resize(size)
+            array = np.array(img, dtype='uint8')
+            array = array.reshape((1, size_x * size_y * 3)).T / 255
+            data_train = np.concatenate((data_train, array), axis=1)
+            label_train.append(1)
+        """
         for i in range(1, 101):
             img = Image.open('person (%i).jpg' % i)
             img = img.resize(size)
@@ -425,7 +440,7 @@ if __name__ == "__main__":
             array = array.reshape((1, size_x * size_y * 3)).T / 255
             data_train = np.concatenate((data_train, array), axis=1)
             label_train.append(1)
-
+        """
         img = Image.open('a (1).jpg')
         img = img.resize(size)
         array = np.array(img, dtype='uint8')
@@ -468,12 +483,12 @@ if __name__ == "__main__":
         data_test = np.concatenate((data_test, array), axis=1)
         label_test.append(1)
 
-        label_train = np.array(label_train).reshape((1, 302))
+        label_train = np.array(label_train).reshape((1, 248))
         label_test = np.array(label_test).reshape((1, 6))
-        layers_dims = [size_x * size_y * 3, 6, 4, 1]
+        layers_dims = [size_x * size_y * 3, 8, 7, 1]
         parameters = L_layer_network(data_train, label_train,
                                      layers_dims,
-                                     num_iterations=5000,
+                                     num_iterations=2000,
                                      learning_rate=0.01,
                                      print_cost=True, lambd=0)
         predict_train = predict_training(data_train, label_train,
