@@ -347,7 +347,7 @@ def predict(X, parameters):
         Возвращает предсказанное значение
     """
     probabilities, caches = L_layer_network_forward(X, parameters)
-    if probabilities[0][0] > 0.99:
+    if probabilities[0][0] > 0.95:
         return 1
     else:
         return 0
