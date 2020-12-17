@@ -63,7 +63,7 @@ while (cap.isOpened()):
             print(Delta)
             x.append(count)
             y.append(Delta)
-            if Delta > medium_delta*(param1 + medium_duo/delta_duo*param5) and delta_duo > medium_duo * param2::
+            if Delta > medium_delta*(param1 + medium_duo/delta_duo*param5) and delta_duo > medium_duo * param2:
                 status = "move"
                 next = next + 1
                 if next%3 == 0:
