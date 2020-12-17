@@ -1,25 +1,26 @@
 import telebot
 from telebot import types
 
-bot = telebot.TeleBot("1427672157:AAH_K0LbWsIuNyUR3vQC9tEvxxrkHlqVEuY")
+bot = telebot. TeleBot("1427672157:AAH_K0LbWsIuNyUR3vQC9tEvxxrkHlqVEuY")
 
 keyboard1 = telebot.types.ReplyKeyboardMarkup(True, True)
-keyboard1.row('Начать', 'Прекратить')
+keyboard1.row('Привет', 'Пока')
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
     bot.send_message(message.chat.id, 'Привет, начнем видеонаблюдение?', reply_markup=keyboard1)
-    bot.send_sticker(message.chat.id, 'CAADAgADZgkAAnlc4gmfCor5YbYYRAI')
+
 
 
 @bot.message_handler(content_types=['text'])
 def send_text(message):
-    if message.text.lower() == 'Начать':
-        bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}')
-    elif message.text.lower() == 'Прекратить':
-        bot.send_message(message.chat.id, f'Прощай, {message.from_user.first_name} ')
+    if message.text == 'Привет':
+        bot.send_message(message.chat.id, 'Привет')
+        bot.send_sticker(message.chat.id, 'CAADAgADZgkAAnlc4gmfCor5YbYYRAI')
+    elif message.text == 'Пока':
+        bot.send_message(message.chat.id, 'Прощай')
 
-@bot.message_handler(content_types=['sticker'])
+@bot.message_handler(content_types = ['sticker'])
 def sticker_id(message):
     print(message)
 
