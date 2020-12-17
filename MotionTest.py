@@ -6,7 +6,7 @@ import numpy as np
 count = 0
 path_of_the_center = []
 couple = [0] * 2
-cap = cv2.VideoCapture('newtest2.mp4')
+cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 # Параметры сжатия m,n
 m = 20
 n = 20
