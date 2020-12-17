@@ -72,8 +72,6 @@ while (cap.isOpened()):
                     neural_network_check = cv2.resize(neural_network_check, dsize=(160, 90), interpolation=cv2.INTER_CUBIC)
                     neural_network_check = neural_network_check.reshape(160*90*3, 1)/255
                     worry = Neural_Network.check_image(neural_network_check)
-                    else:
-                        worry = 1
                     if worry == 1:
                         # Тут вывод в бота
                         print("Человек", count)
