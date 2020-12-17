@@ -36,22 +36,23 @@ relax_time = 0
 status = "static"
 worry = 0
 # Открываем видео для чтения до окончания процесса
-
+mode = "day"
 while (cap.isOpened()):
     ret, frame = cap.read()
-    mode = "day"
     if mode == "day":
         # параметры для дня
-        param1 = 40
-        param2 = 6
-        param3 = 40
+        param1 = 70
+        param2 = 5
+        param3 = 50
         param4 = 2
+        param5 = 1
     else:
         # параметры ночи
-        param1 = 15
-        param2 = 4
-        param3 = 5
-        param4 = 1.5
+        param1 = 40
+        param2 = 0
+        param3 = 15
+        param4 = 2
+        param5 = 0
     if ret == True:
         count += 1
         if count > len_static + 1:
@@ -62,9 +63,10 @@ while (cap.isOpened()):
             print(Delta)
             x.append(count)
             y.append(Delta)
-            if Delta > medium_delta*(param1 + medium_duo/delta_duo) and delta_duo > medium_duo * param2:
+            if Delta > medium_delta*(param1 + medium_duo/delta_duo*param5) and delta_duo > medium_duo * param2::
                 status = "move"
-                if count%3 == 0:
+                next = next + 1
+                if next%3 == 0:
                     neural_network_check = frame
                     neural_network_check = np.array(neural_network_check, dtype='uint8')
                     neural_network_check = cv2.resize(neural_network_check, dsize=(160, 90), interpolation=cv2.INTER_CUBIC)
@@ -73,6 +75,12 @@ while (cap.isOpened()):
                     if worry == 1:
                         # Тут вывод в бота
                         print("Человек", count)
+                    else:
+                        worry = 1
+                    if worry == 1:
+                        # Тут вывод в бота
+                        print("Человек", count)
+                        worry = 0
             else:
                 # проверка было ли движение
                 if status == "move":
@@ -114,7 +122,7 @@ while (cap.isOpened()):
             x0 = int(width / 2)
             y0 = int(height / 2)
             x.append(count)
-
+            next = 0
 
         else:
             couple[1] = image.rgb(frame, m, n)
