@@ -45,14 +45,12 @@ while (cap.isOpened()):
         param2 = 5
         param3 = 50
         param4 = 2
-        param5 = 1
     else:
         # параметры ночи
         param1 = 40
         param2 = 0
         param3 = 15
         param4 = 2
-        param5 = 0
     if ret == True:
         count += 1
         if count > len_static + 1:
@@ -63,7 +61,7 @@ while (cap.isOpened()):
             print(Delta)
             x.append(count)
             y.append(Delta)
-            if Delta > medium_delta*(param1 + medium_duo/delta_duo*param5) and delta_duo > medium_duo * param2:
+            if Delta > medium_delta*param1  and delta_duo > medium_duo * param2:
                 status = "move"
                 next = next + 1
                 if next%3 == 0:
