@@ -4,21 +4,32 @@ from telebot import types
 bot = telebot. TeleBot("1427672157:AAH_K0LbWsIuNyUR3vQC9tEvxxrkHlqVEuY")
 
 keyboard1 = telebot.types.ReplyKeyboardMarkup(True, True)
-keyboard1.row('Привет', 'Пока')
+keyboard1.row('Начнем', 'Не нужно')
+keyboard2 = telebot.types.ReplyKeyboardMarkup(True, True)
+keyboard2.row('День', 'Ночь')
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
     bot.send_message(message.chat.id, 'Привет, начнем видеонаблюдение?', reply_markup=keyboard1)
 
-
-
 @bot.message_handler(content_types=['text'])
 def send_text(message):
-    if message.text == 'Привет':
-        bot.send_message(message.chat.id, 'Привет')
-        bot.send_sticker(message.chat.id, 'CAADAgADZgkAAnlc4gmfCor5YbYYRAI')
-    elif message.text == 'Пока':
+    if message.text == 'Начнем':
+        bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAKGY1_bde_LilNGDnjcXIBFL93uqlwEAAJiFgAC6VUFGKq9bs1J0e3SHgQ')
+        bot.send_message(message.chat.id, 'Выберите режим', reply_markup=keyboard2)
+        bot.register_next_step_handler(message, choose_mode)  # следующий шаг – функция  choose_mode
+    elif message.text == 'Не нужно':
         bot.send_message(message.chat.id, 'Прощай')
+
+def choose_mode(message):
+    if message.text == 'День':
+        bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAKGY1_bde_LilNGDnjcXIBFL93uqlwEAAJiFgAC6VUFGKq9bs1J0e3SHgQ')
+        bot.register_next_step_handler(message, lets_work) # следующий шаг – функция  lets_work
+    elif message.text == 'Ночь':
+        bot.send_message(message.chat.id, 'Прощай')
+
+def lets_work(message):
+    
 
 @bot.message_handler(content_types = ['sticker'])
 def sticker_id(message):
@@ -98,4 +109,5 @@ def sticker_id(message):
   #  elif call.data == "no":
       #   ... #переспрашиваем
 
-bot.polling(none_stop = True, interval = 0)
+if __name__ == '__main__':
+    bot.polling(none_stop=True)
