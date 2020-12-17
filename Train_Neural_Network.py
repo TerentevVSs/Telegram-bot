@@ -328,8 +328,6 @@ def predict_training(X, Y, parameters):
     m = X.shape[1]
     p = np.zeros((1, m))
     probabilities, caches = L_layer_network_forward(X, parameters)
-    print('prob=', probabilities)
-    print('Y=', Y)
     for i in range(0, probabilities.shape[1]):
         if probabilities[0, i] > 0.5:
             p[0, i] = 1
@@ -349,7 +347,7 @@ def predict(X, parameters):
         Возвращает предсказанное значение
     """
     probabilities, caches = L_layer_network_forward(X, parameters)
-    if probabilities[0][0] > 0.9:
+    if probabilities[0][0] > 0.99:
         return 1
     else:
         return 0
@@ -362,133 +360,18 @@ if __name__ == "__main__":
 отменить запуск программы нажав "N", иначе параметры нейросети
 обнулятся, что приведет к потере работоспособности. Если 
 хотите продолжить нажмите "Y", если нет нажмите "N".""")
-    check = "Y"  # input("Y/N?:")
-    """
-    Данный код предназначен для быстрой настройки сети и будет удален 
-    позднее.
-    """
-    if check == "Y" or check == "y" or True:
-        size_x = 160
-        size_y = 90
-        img = Image.open('test (1).jpg')
-        size = (size_x, size_y)
-        img = img.resize(size)
-        array = np.array(img, dtype='uint8').reshape(
-            (1, size_x * size_y * 3)).T
-        data_train = np.array(array)
-        label_train = [1]
-
-        for i in range(2, 26):
-            img = Image.open('test (%i).jpg' % i)
-            img = img.resize(size)
-            array = np.array(img, dtype='uint8')
-            array = array.reshape((1, size_x * size_y * 3)).T / 255
-            data_train = np.concatenate((data_train, array), axis=1)
-            label_train.append(1)
-
-        for i in range(1, 26):
-            img = Image.open('nontest (%i).jpg' % i)
-            img = img.resize(size)
-            array = np.array(img, dtype='uint8')
-            array = array.reshape((1, size_x * size_y * 3)).T / 255
-            data_train = np.concatenate((data_train, array), axis=1)
-            label_train.append(0)
-
-        for i in range(1, 27):
-            img = Image.open('n (%i).jpg' % i)
-            img = img.resize(size)
-            array = np.array(img, dtype='uint8')
-            array = array.reshape((1, size_x * size_y * 3)).T / 255
-            data_train = np.concatenate((data_train, array), axis=1)
-            label_train.append(0)
-
-        for i in range(1, 27):
-            img = Image.open('y (%i).jpg' % i)
-            img = img.resize(size)
-            array = np.array(img, dtype='uint8')
-            array = array.reshape((1, size_x * size_y * 3)).T / 255
-            data_train = np.concatenate((data_train, array), axis=1)
-            label_train.append(1)
-
-        for i in range(1, 101):
-            img = Image.open('nonperson (%i).jpg' % i)
-            img = img.resize(size)
-            array = np.array(img, dtype='uint8')
-            array = array.reshape((1, size_x * size_y * 3)).T / 255
-            data_train = np.concatenate((data_train, array), axis=1)
-            label_train.append(0)
-
-        for i in range(1, 41):
-            img = Image.open('np (%i).jpg' % i)
-            img = img.resize(size)
-            array = np.array(img, dtype='uint8')
-            array = array.reshape((1, size_x * size_y * 3)).T / 255
-            data_train = np.concatenate((data_train, array), axis=1)
-            label_train.append(0)
-        for i in range(1, 7):
-            img = Image.open('p (%i).jpg' % i)
-            img = img.resize(size)
-            array = np.array(img, dtype='uint8')
-            array = array.reshape((1, size_x * size_y * 3)).T / 255
-            data_train = np.concatenate((data_train, array), axis=1)
-            label_train.append(1)
+    check = input("Y/N?:")
+    if check == "Y" or check == "y":
+        # Здесь передаются фотографии для тренировки
         """
-        for i in range(1, 101):
-            img = Image.open('person (%i).jpg' % i)
-            img = img.resize(size)
-            array = np.array(img, dtype='uint8')
-            array = array.reshape((1, size_x * size_y * 3)).T / 255
-            data_train = np.concatenate((data_train, array), axis=1)
-            label_train.append(1)
+        # Здесь передаются фотографии для тренировки код 
+        # удален, так как обрабатываемый здесь тренировочный 
+        # датасет хранится только на компьютере разработчика.
         """
-        img = Image.open('a (1).jpg')
-        img = img.resize(size)
-        array = np.array(img, dtype='uint8')
-        array = array.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = array
-        label_test = [1]
-
-        img = Image.open('a (2).jpg')
-        img = img.resize(size)
-        array = np.array(img, dtype='uint8')
-        array = array.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = np.concatenate((data_test, array), axis=1)
-        label_test.append(1)
-
-        img = Image.open('b (1).jpg')
-        img = img.resize(size)
-        array = np.array(img, dtype='uint8')
-        array = array.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = np.concatenate((data_test, array), axis=1)
-        label_test.append(1)
-
-        img = Image.open('b (2).jpg')
-        img = img.resize(size)
-        array = np.array(img, dtype='uint8')
-        array = array.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = np.concatenate((data_test, array), axis=1)
-        label_test.append(1)
-
-        img = Image.open('c (1).jpg')
-        img = img.resize(size)
-        array = np.array(img, dtype='uint8')
-        array = array.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = np.concatenate((data_test, array), axis=1)
-        label_test.append(1)
-
-        img = Image.open('c (2).jpg')
-        img = img.resize(size)
-        array = np.array(img, dtype='uint8')
-        array = array.reshape((1, size_x * size_y * 3)).T / 255
-        data_test = np.concatenate((data_test, array), axis=1)
-        label_test.append(1)
-
-        label_train = np.array(label_train).reshape((1, 248))
-        label_test = np.array(label_test).reshape((1, 6))
-        layers_dims = [size_x * size_y * 3, 8, 7, 1]
+        layers_dims = [size_x * size_y * 3, 8, 6, 1]
         parameters = L_layer_network(data_train, label_train,
                                      layers_dims,
-                                     num_iterations=2000,
+                                     num_iterations=3000,
                                      learning_rate=0.01,
                                      print_cost=True, lambd=0)
         predict_train = predict_training(data_train, label_train,
