@@ -10,7 +10,8 @@ cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 # Параметры сжатия m,n
 m = 20
 n = 20
-# параметр кол-ва кадров в усреднении len_static_set, и массив кадров для усреднения  static_set  + средний кадр
+# параметр количества кадров в усреднении len_static_set
+# и массив кадров для усреднения  static_set  + средний кадр
 len_static = 40
 static_set = [0] * (len_static + 1)
 # позиция в static_set на который будет поставлен новый статичный кадр
@@ -58,15 +59,19 @@ while cap.isOpened():
             print(Delta)
             x.append(count)
             y.append(Delta)
-            if Delta > medium_delta*(params["delta_high"] + medium_duo/delta_duo) \
+            if Delta > medium_delta*(params["delta_high"] + 
+                                     medium_duo/delta_duo) \
                     and delta_duo > medium_duo * params["duo_high"]:
                 it_moves = True
                 if count % 3 == 0:
                     neural_network_check = frame
-                    neural_network_check = np.array(neural_network_check, dtype='uint8')
-                    neural_network_check = cv2.resize(neural_network_check,
-                                                      dsize=(160, 90), interpolation=cv2.INTER_CUBIC)
-                    neural_network_check = neural_network_check.reshape(160*90*3, 1)/255
+                    neural_network_check = np.array(
+                        neural_network_check, dtype='uint8')
+                    neural_network_check = cv2.resize(
+                        neural_network_check, dsize=(160, 90), 
+                        interpolation=cv2.INTER_CUBIC)
+                    neural_network_check = neural_network_check.reshape(
+                        160*90*3, 1) / 255
                     worry = Neural_Network.check_image(neural_network_check)
                     if worry == 1:
                         # Тут вывод в бота
@@ -79,17 +84,22 @@ while cap.isOpened():
                     if relax_time == 10:
                         it_moves = False
                 else:
-                    # движение не было иди прошло, проверка для добавление кадр в усреднение
+                    # движение не было иди прошло, проверка для 
+                    # добавление кадр в усреднение
                     if Delta < params["delta_low"] * medium_delta\
                             and delta_duo < medium_duo * params["duo_low"]:
                         # кадр подходит для усреднения
-                        static_set[len_static] = static_set[len_static] * len_static \
-                                                 - static_set[position_static_set][0]
-                        static_set[position_static_set] = [couple[1], Delta]
+                        static_set[len_static] = static_set[len_static] \
+                                     * len_static \
+                                    - static_set[position_static_set][0]
+                        static_set[position_static_set] = [couple[1], 
+                                                           Delta]
                         static_set[len_static] = (static_set[len_static] +
-                                                  static_set[position_static_set][0]) / len_static
+                                    static_set[position_static_set][0]) /\
+                                                 len_static
                         couple[0] = static_set[len_static]
-                        position_static_set = (position_static_set + 1) % len_static
+                        position_static_set = (position_static_set + 1) \
+                                              % len_static
         elif count == len_static + 1:
             static_set[count - 2] = [couple[1], Delta]
             # вычислениек medium_delta
@@ -103,7 +113,8 @@ while cap.isOpened():
             couple[1] = image.rgb(frame, m, n)
             Delta = image.delta(couple)
             # вычисление medium_duo
-            medium_duo += image.delta([static_set[count - 2][0], static_set[count - 3][0]])
+            medium_duo += image.delta([static_set[count - 2][0], 
+                                       static_set[count - 3][0]])
             medium_duo = medium_duo / len_static
             x.append(count)
             y.append(Delta)
@@ -122,7 +133,8 @@ while cap.isOpened():
             static_set[count - 2] = [couple[1], Delta]
             # подсчёт
             if count > 2:
-                medium_duo += image.delta([static_set[count - 2][0], static_set[count-3][0]])
+                medium_duo += image.delta([static_set[count - 2][0], 
+                                           static_set[count-3][0]])
             sum_delta = sum_delta + Delta
             # обновление среднего кадра
             static_set[len_static] = static_set[len_static] * (count - 2)
