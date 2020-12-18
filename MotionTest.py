@@ -35,6 +35,8 @@ relax_time = 0
 it_moves = False
 # Статус движения после обработки нейросетью
 worry = 0
+# Булева функция дня и ночи
+it_is_day = None
 # Словарь параметров дня и ночи
 day = {"delta_high": 70, "duo_high": 5, "delta_low": 50, "duo_low": 2}
 night = {"delta_high": 40, "duo_high": 0, "delta_low": 15, "duo_low": 2}
@@ -60,6 +62,7 @@ def send_text(message):
         bot.send_message(message.chat.id, 'Прощай')
 
 def choose_mode(message):
+    global it_is_day
     if message.text == 'День':
         it_is_day = True  # Булева функция дня и ночи
     elif message.text == 'Ночь':
