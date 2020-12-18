@@ -7,34 +7,7 @@ from telebot import types
 
 bot = telebot. TeleBot("1427672157:AAH_K0LbWsIuNyUR3vQC9tEvxxrkHlqVEuY")
 
-count = 0
-couple = [0] * 2
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-# Параметры сжатия m,n
-m = 20
-n = 20
-# параметр количества кадров в усреднении len_static_set
-# и массив кадров для усреднения  static_set  + средний кадр
-len_static = 40
-static_set = [0] * (len_static + 1)
-# позиция в static_set на который будет поставлен новый статичный кадр
-position_static_set = 0
-# neural_network_set кадр для проверки
-neural_network_check = "None"
-# длина списка набор для нейросети
-len_neural_set = 0
-# medium_delta - среднее отклонение в покое
-medium_delta = 0
-# величина для подсчёта medium_delta
-sum_delta = 0
-# среднее отклонение двух последовательных кадров друг от друга
-medium_duo = 0
-# кол-во кадров после конца движения
-relax_time = 0
-# статус движение - покой
-it_moves = False
-# Статус движения после обработки нейросетью
-worry = 0
+
 # Булева функция дня и ночи
 it_is_day = None
 # Словарь параметров дня и ночи
@@ -70,6 +43,34 @@ def choose_mode(message):
     bot.register_next_step_handler(message, lets_work)  # следующий шаг – функция  lets_work
 
 def lets_work(message):
+    count = 0
+    couple = [0] * 2
+    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    # Параметры сжатия m,n
+    m = 20
+    n = 20
+    # параметр количества кадров в усреднении len_static_set
+    # и массив кадров для усреднения  static_set  + средний кадр
+    len_static = 40
+    static_set = [0] * (len_static + 1)
+    # позиция в static_set на который будет поставлен новый статичный кадр
+    position_static_set = 0
+    # neural_network_set кадр для проверки
+    neural_network_check = "None"
+    # длина списка набор для нейросети
+    len_neural_set = 0
+    # medium_delta - среднее отклонение в покое
+    medium_delta = 0
+    # величина для подсчёта medium_delta
+    sum_delta = 0
+    # среднее отклонение двух последовательных кадров друг от друга
+    medium_duo = 0
+    # кол-во кадров после конца движения
+    relax_time = 0
+    # статус движение - покой
+    it_moves = False
+    # Статус движения после обработки нейросетью
+    worry = 0
     # Проверяем, открывается ли видео
     if not cap.isOpened():
         bot.send_message(message.chat.id, 'Error opening video stream or file')
