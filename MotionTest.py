@@ -160,7 +160,7 @@ def get_work(message):
                 static_set[len_static] += static_set[count - 2][0]
                 static_set[len_static] = static_set[len_static] / (count - 1)
                 couple[0] = static_set[len_static]
-            cv2.imshow('Frame', frame)
+            #cv2.imshow('Frame', frame)
             # Press "space" on keyboard to  exit
             if message.text == '/stop':
                 bot.send_message(message.chat.id, 'До свидания!')
@@ -170,11 +170,7 @@ def get_work(message):
         # Выход из видео, когда процесс окончен
     cap.release()
     cv2.destroyAllWindows()
-    #bot.register_next_step_handler(message, lets_work)  # следующий шаг – функция  lets_work
 
-
-
-#def lets_work(message):
 
 @bot.message_handler(content_types = ['sticker'])
 def sticker_id(message):
