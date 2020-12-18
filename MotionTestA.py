@@ -126,7 +126,7 @@ while cap.isOpened():
             static_set[len_static] += static_set[count - 2][0]
             static_set[len_static] = static_set[len_static] / (count - 1)
             couple[0] = static_set[len_static]
-        cv2.imshow('Frame', frame)
+        #cv2.imshow('Frame', frame)
         # Press "space" on keyboard to  exit
         if cv2.waitKey(32) & 0xFF == ord(' '):
             break
