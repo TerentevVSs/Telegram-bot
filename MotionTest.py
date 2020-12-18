@@ -70,7 +70,7 @@ def get_work(message):
     worry = 0
     # Проверяем, открывается ли видео
     if not cap.isOpened():
-        bot.send_message(message.chat.id, 'Error opening video stream or file')
+        bot.send_message(message.chat.id, 'Подождите, мы внимательно смотрим.....')
     # Открываем видео для чтения до окончания процесса
     while cap.isOpened():
         ret, frame = cap.read()
