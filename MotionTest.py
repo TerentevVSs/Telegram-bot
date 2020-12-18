@@ -12,8 +12,8 @@ bot = telebot. TeleBot("1427672157:AAH_K0LbWsIuNyUR3vQC9tEvxxrkHlqVEuY")
 # Булева функция дня и ночи
 it_is_day = None
 # Словарь параметров дня и ночи
-day = {"delta_high": 70, "duo_high": 5, "delta_low": 50, "duo_low": 2}
-night = {"delta_high": 40, "duo_high": 0, "delta_low": 15, "duo_low": 2}
+day = {"delta_high": 40, "duo_high": 5, "delta_low": 50, "duo_low": 2}
+night = {"delta_high": 20, "duo_high": 0, "delta_low": 15, "duo_low": 2}
 
 keyboard1 = telebot.types.ReplyKeyboardMarkup(True, True)
 keyboard1.row('Начнем', 'Не нужно')
