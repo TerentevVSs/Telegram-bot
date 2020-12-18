@@ -31,15 +31,15 @@ def send_text(message):
     if message.text == 'Начнем':
         bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAKGY1_bde_LilNGDnjcXIBFL93uqlwEAAJiFgAC6VUFGKq9bs1J0e3SHgQ')
         bot.send_message(message.chat.id, 'Выберите режим', reply_markup=keyboard2)
-        bot.register_next_step_handler(message, choose_mode)  # следующий шаг – функция  choose_mode
+        bot.register_next_step_handler(message, get_work)  # следующий шаг – функция  get_work
     elif message.text == 'Не нужно':
         bot.send_message(message.chat.id, 'Прощай')
 
-def choose_mode(message):
-    global it_is_day
+def get_work(message):
+    global it_is_day # Булева функция дня и ночи
     if message.text == 'День':
-        it_is_day = True  # Булева функция дня и ночи
-    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAKGY1_bde_LilNGDnjcXIBFL93uqlwEAAJiFgAC6VUFGKq9bs1J0e3SHgQ')
+        it_is_day = True
+    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAKGY1_bde_LilNGDnjcXIBFL93uqlwEAAJiFgAC6VUFGKq9bs1J0e3SHgQ') # просто чтобы проверить работу кода
     count = 0
     couple = [0] * 2
     cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -102,7 +102,7 @@ def choose_mode(message):
                         if worry == 1:
                             # Тут вывод в бота
                             bot.send_message(message.chat.id, 'ЗАФИКСИРОВАН ЧЕЛОВЕК')
-                            print('men')
+                            print('men') # проверка корректной работы программы
                 else:
                     # проверка было ли движение
                     if it_moves:
