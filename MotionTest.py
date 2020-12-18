@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import Neural_Network
 import numpy as np
 count = 0
-path_of_the_center = []
 couple = [0] * 2
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 # Параметры сжатия m,n
@@ -19,8 +18,6 @@ position_static_set = 0
 # Проверяем, открывается ли видео
 if not cap.isOpened():
     print("Error opening video stream or file")
-x = []
-y = []
 # neural_network_set кадр для проверки
 neural_network_check = "None"
 # длина списка набор для нейросети
@@ -56,10 +53,7 @@ while cap.isOpened():
             couple[1] = image.rgb(frame, m, n)
             Delta = image.delta(couple)
             delta_duo = image.delta([couple[1], old_frame])
-            print(Delta)
-            x.append(count)
-            y.append(Delta)
-            if Delta > medium_delta*(params["delta_high"] + 
+            if Delta > medium_delta*(params["delta_high"] +
                                      medium_duo/delta_duo) \
                     and delta_duo > medium_duo * params["duo_high"]:
                 it_moves = True
@@ -68,7 +62,7 @@ while cap.isOpened():
                     neural_network_check = np.array(
                         neural_network_check, dtype='uint8')
                     neural_network_check = cv2.resize(
-                        neural_network_check, dsize=(160, 90), 
+                        neural_network_check, dsize=(160, 90),
                         interpolation=cv2.INTER_CUBIC)
                     neural_network_check = neural_network_check.reshape(
                         160*90*3, 1) / 255
@@ -84,7 +78,7 @@ while cap.isOpened():
                     if relax_time == 10:
                         it_moves = False
                 else:
-                    # движение не было иди прошло, проверка для 
+                    # движение не было иди прошло, проверка для
                     # добавление кадр в усреднение
                     if Delta < params["delta_low"] * medium_delta\
                             and delta_duo < medium_duo * params["duo_low"]:
@@ -92,7 +86,7 @@ while cap.isOpened():
                         static_set[len_static] = static_set[len_static] \
                                      * len_static \
                                     - static_set[position_static_set][0]
-                        static_set[position_static_set] = [couple[1], 
+                        static_set[position_static_set] = [couple[1],
                                                            Delta]
                         static_set[len_static] = (static_set[len_static] +
                                     static_set[position_static_set][0]) /\
@@ -113,27 +107,19 @@ while cap.isOpened():
             couple[1] = image.rgb(frame, m, n)
             Delta = image.delta(couple)
             # вычисление medium_duo
-            medium_duo += image.delta([static_set[count - 2][0], 
+            medium_duo += image.delta([static_set[count - 2][0],
                                        static_set[count - 3][0]])
             medium_duo = medium_duo / len_static
-            x.append(count)
-            y.append(Delta)
         elif count == 1:
             height, width = frame.shape[:2]
             couple[0] = image.rgb(frame, m, n)
-            x0 = int(width / 2)
-            y0 = int(height / 2)
-            x.append(count)
         else:
             couple[1] = image.rgb(frame, m, n)
             Delta = image.delta(couple)
-            print(Delta)
-            x.append(count)
-            y.append(Delta)
             static_set[count - 2] = [couple[1], Delta]
             # подсчёт
             if count > 2:
-                medium_duo += image.delta([static_set[count - 2][0], 
+                medium_duo += image.delta([static_set[count - 2][0],
                                            static_set[count-3][0]])
             sum_delta = sum_delta + Delta
             # обновление среднего кадра
@@ -150,6 +136,4 @@ while cap.isOpened():
 
 # Выход из видео, когда процесс окончен
 cap.release()
-plt.plot(x[26:], y[25:], "bo")
-plt.show()
 cv2.destroyAllWindows()
