@@ -1,6 +1,5 @@
 import cv2
 import module_image as image
-import matplotlib.pyplot as plt
 import Neural_Network
 import numpy as np
 count = 0
